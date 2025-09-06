@@ -1,5 +1,5 @@
 # Docker-Wipter
-   
+    
 ## Overview
 This repository provides a Dockerized solution for running Wipter. The setup uses `ghcr.io/techroy23/docker-slimvnc:latest` as base image to ensure minimal system overhead and integrates all necessary dependencies for seamless operation.
 

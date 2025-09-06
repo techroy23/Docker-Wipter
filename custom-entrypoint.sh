@@ -1,6 +1,6 @@
 #!/bin/bash
 set -m
- 
+  
 MASKED_PASSWORD=$(printf '***%.0s' $(seq ${#WIPTER_PASSWORD}))
 
 echo " "

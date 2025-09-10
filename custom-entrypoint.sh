@@ -23,6 +23,14 @@ echo " "
 echo "hostnamectl"
 /usr/bin/hostnamectl
 
+if [ -z "${HOSTNAME:-}" ]; then
+    RAND_NUM=$(awk 'BEGIN { srand(); printf "%04d\n", int(1000 + rand()*9000) }')
+    HOSTNAME="PC-$RAND_NUM"
+fi
+echo "[entrypoint] Forcing hostname to: $HOSTNAME"
+hostname "$HOSTNAME"
+echo "$HOSTNAME" > /etc/hostname
+
 eval "$(dbus-launch --sh-syntax)"
 echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace
 

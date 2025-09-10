@@ -9,6 +9,8 @@ echo "Executing custom entrypoint ..."
 echo "=== === === === === === === ==="
 echo " "
 
+update-ca-certificates
+
 echo " "
 echo "=== === === === === === === === === === ==="
 echo " Setting up lsb_release and hostnamectl ..."

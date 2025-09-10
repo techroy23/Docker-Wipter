@@ -11,10 +11,9 @@ RUN wget -O /tmp/wipter.deb https://provider-assets.wipter.com/latest/linux/x64/
 
 RUN apt-get autoclean && apt-get autoremove -y && apt-get autopurge -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN printf '#!/bin/bash \n echo "%s"' "$(lsb_release -a)" > /usr/bin/lsb_release && \
-    printf '#!/bin/bash \n echo "%s"' "$(hostnamectl)" > /usr/bin/hostnamectl && \
-    printf '#!/bin/bash \n echo "%s"' "$(systemctl)" > /usr/bin/systemctl && \
-    chmod a+x /usr/bin/install /usr/bin/hostnamectl /usr/bin/lsb_release /usr/bin/systemctl
+RUN printf '#!/bin/sh \n echo "%s"' "$(lsb_release -a)" > /usr/bin/lsb_release && \
+    printf '#!/bin/sh \n echo "%s"' "$(hostnamectl)" > /usr/bin/hostnamectl && \
+    chmod a+x /usr/bin/hostnamectl /usr/bin/lsb_release
 
 COPY custom.sh /custom.sh
 

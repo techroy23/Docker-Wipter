@@ -9,6 +9,20 @@ echo "Executing custom entrypoint ..."
 echo "=== === === === === === === ==="
 echo " "
 
+echo " "
+echo "=== === === === === === === === === === ==="
+echo " Setting up lsb_release and hostnamectl ..."
+echo "=== === === === === === === === === === ==="
+sh /custom.sh 
+echo " "
+echo "Container Info:"
+echo " "
+echo "lsb_release"
+/usr/bin/lsb_release
+echo " "
+echo "hostnamectl"
+/usr/bin/hostnamectl
+
 eval "$(dbus-launch --sh-syntax)"
 echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace
 

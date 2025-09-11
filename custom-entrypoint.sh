@@ -5,6 +5,7 @@ echo " "
 echo "# ### ### ### ### ### ### ### #"
 echo "# Executing custom entrypoint #"
 echo "# ### ### ### ### ### ### ### #"
+echo " "
 
 echo " "
 echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
@@ -26,8 +27,11 @@ echo "# ### ### ### ### ### ### #"
 echo "# update-ca-certificates  #"
 echo "# ### ### ### ### ### ### #"
 update-ca-certificates
+echo " "
 
+echo " "
 echo "[INFO] Forcing hostname to: $HOSTNAME"
+echo " "
 if [ -z "${HOSTNAME:-}" ]; then
     RAND_NUM=$(awk 'BEGIN { srand(); printf "%04d\n", int(1000 + rand()*9000) }')
     HOSTNAME="PC-$RAND_NUM"
@@ -72,18 +76,24 @@ setup_wipter() {
 
   if [ -n "$KEYRING_SECRET" ] && [ "$KEYRING_SECRET" != "-" ]; then
       echo " "
-      echo "[INFO] Valid Wipter keyring secret detected — skipping login."
+      echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##"
+      echo "# [INFO] Valid Wipter keyring secret detected — skipping login #"
+      echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##"
+      echo " "
       return 0
   else
       echo " "
-      echo "[WARN] No valid Wipter keyring secret detected — starting login process."
+      echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+      echo "# [WARN] No valid Wipter keyring secret detected — starting login process #"
+      echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
       echo " "
   fi
 
   if [ -z "$WIPTER_EMAIL" ] || [ -z "$WIPTER_PASSWORD" ]; then
     echo " "
-    echo "[WARN] WIPTER_EMAIL or WIPTER_PASSWORD is not set. Please set both before running this script."
-    echo " "
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+    echo "# [WARN] WIPTER_EMAIL or WIPTER_PASSWORD is not set. Please set both before running this script #"
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
     return 0
   fi
 
@@ -101,7 +111,9 @@ setup_wipter() {
 
   if [ -z "$WIPTER_WIN" ]; then
     echo " "
-    echo "[WARN] Wipter window was not found after waiting — exiting."
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+    echo "# [WARN] Wipter window was not found after waiting — exiting  #"
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
     echo " "
     exit 1
   fi
@@ -161,12 +173,20 @@ echo "# ### ### ### ### #"
 echo " "
 
 if [[ -n "$DISCORD_WEBHOOK_URL" && "$DISCORD_WEBHOOK_URL" =~ ^https://discord\.com/api/webhooks/[0-9]+/[A-Za-z0-9_-]+$ ]]; then
-    echo "[INFO] Valid Discord webhook detected — starting Discord loop in background..."
+    echo " "
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+    echo "# [INFO] Valid Discord webhook detected — starting Discord loop in background #"
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+    echo " "
     discord_loop &
 else
-    echo "[WARN] Discord webhook is missing or invalid."
-    echo "[WARN] Expected format: https://discord.com/api/webhooks/<id>/<token>"
-    echo "[WARN] Skipping Discord loop — please set DISCORD_WEBHOOK_URL correctly."
+    echo " "
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+    echo "# [WARN] Discord webhook is missing or invalid                            #" 
+    echo "# [WARN] Expected format: https://discord.com/api/webhooks/<id>/<token>   #"
+    echo "# [WARN] Skipping Discord loop — please set DISCORD_WEBHOOK_URL correctly #"
+    echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### #"
+    echo " "
 fi
 
 /opt/Wipter/wipter-app &

@@ -1,68 +1,92 @@
 #!/bin/bash
 set -m
-  
-MASKED_PASSWORD=$(printf '***%.0s' $(seq ${#WIPTER_PASSWORD}))
 
 echo " "
-echo "=== === === === === === === ==="
-echo "Executing custom entrypoint ..."
-echo "=== === === === === === === ==="
-echo " "
-
-update-ca-certificates
+echo "# ### ### ### ### ### ### ### #"
+echo "# Executing custom entrypoint #"
+echo "# ### ### ### ### ### ### ### #"
 
 echo " "
-echo "=== === === === === === === === === === ==="
-echo " Setting up lsb_release and hostnamectl ..."
-echo "=== === === === === === === === === === ==="
+echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+echo "# Modifying lsb_release / hostnamectl / ca-certificates #"
+echo "# ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 sh /custom.sh 
 echo " "
-echo "Container Info:"
-echo " "
-echo "lsb_release"
+echo "# ### ### ### #"
+echo "# lsb_release #"
+echo "# ### ### ### #"
 /usr/bin/lsb_release
 echo " "
-echo "hostnamectl"
+echo "# ### ### ### #"
+echo "# hostnamectl #"
+echo "# ### ### ### #"
 /usr/bin/hostnamectl
+echo " "
+echo "# ### ### ### ### ### ### #"
+echo "# update-ca-certificates  #"
+echo "# ### ### ### ### ### ### #"
+update-ca-certificates
 
+echo "[INFO] Forcing hostname to: $HOSTNAME"
 if [ -z "${HOSTNAME:-}" ]; then
     RAND_NUM=$(awk 'BEGIN { srand(); printf "%04d\n", int(1000 + rand()*9000) }')
     HOSTNAME="PC-$RAND_NUM"
 fi
-echo "[entrypoint] Forcing hostname to: $HOSTNAME"
-hostname "$HOSTNAME"
-echo "$HOSTNAME" > /etc/hostname
 
-eval "$(dbus-launch --sh-syntax)"
-echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace
+if hostname "$HOSTNAME" && echo "$HOSTNAME" > /etc/hostname; then
+    echo " "
+    echo "[INFO] Hostname successfully set to: $HOSTNAME"
+    echo " "
+else
+    echo " "
+    echo "[WARN] Failed to set hostname to: $HOSTNAME"
+    echo "[WARN] Please check permissions or container capabilities."
+    echo " "
+fi
+
+if eval "$(dbus-launch --sh-syntax)"; then
+    echo " "
+    echo "[INFO] D-Bus session launched."
+    echo " "
+else
+    echo " "
+    echo "[WARN] Failed to launch D-Bus session."
+    echo " "
+fi
+
+if echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace; then
+    echo " "
+    echo "[INFO] GNOME keyring unlocked successfully."
+    echo " "
+else
+    echo " "
+    echo "[WARN] Failed to unlock GNOME keyring — check password or environment."
+    echo " "
+fi
+
+MASKED_PASSWORD=$(printf '*%.0s' $(seq ${#WIPTER_PASSWORD}))
 
 setup_wipter() {
-  sleep 5
-  FLAG_FILE="/root/.config/wipter.setup_done"
+  KEYRING_SECRET=$(secret-tool search service com.wipter.auth.production 2>/dev/null \
+                   | awk -F' = ' '/^secret = / {print $2; exit}')
 
-  if [ -f "$FLAG_FILE" ]; then
-    echo " "
-    echo "=== === === === === === === === === === === === === ==="
-    echo "Wipter setup is already done; skipping initialization."
-    echo "=== === === === === === === === === === === === === ==="
-    echo " "
-    return 0
+  if [ -n "$KEYRING_SECRET" ] && [ "$KEYRING_SECRET" != "-" ]; then
+      echo " "
+      echo "[INFO] Valid Wipter keyring secret detected — skipping login."
+      return 0
+  else
+      echo " "
+      echo "[WARN] No valid Wipter keyring secret detected — starting login process."
+      echo " "
   fi
 
   if [ -z "$WIPTER_EMAIL" ] || [ -z "$WIPTER_PASSWORD" ]; then
     echo " "
-    echo "=== === === === === === === === === === === === === ==="
-    echo "WIPTER_EMAIL or WIPTER_PASSWORD is not set or is blank."
-    echo "=== === === === === === === === === === === === === ==="
+    echo "[WARN] WIPTER_EMAIL or WIPTER_PASSWORD is not set. Please set both before running this script."
     echo " "
     return 0
   fi
-  echo " "
-  echo "=== === === === === === === === === === === ==="
-  echo "Found necessary login details. Trying now ..."
-  echo "=== === === === === === === === === === === ==="
-  echo " "
-  
+
   local WIPTER_WIN=""
   local attempts=0
   while [ -z "$WIPTER_WIN" ] && [ $attempts -lt 30 ]; do
@@ -77,11 +101,9 @@ setup_wipter() {
 
   if [ -z "$WIPTER_WIN" ]; then
     echo " "
-    echo "=== === === === === === === === === === === === ==="
-    echo "Wipter window was not found after waiting. Exiting."
-    echo "=== === === === === === === === === === === === ==="
+    echo "[WARN] Wipter window was not found after waiting — exiting."
     echo " "
-    return 0
+    exit 1
   fi
 
   wmctrl -ia "$WIPTER_WIN"
@@ -94,7 +116,7 @@ setup_wipter() {
   sleep 5
   echo " "
   echo "=== === === === === === === === === === === === ==="
-  echo "Typing EMAIL = $WIPTER_EMAIL"
+  echo "[INFO] Typing EMAIL = $WIPTER_EMAIL"
   echo "=== === === === === === === === === === === === ==="
   echo " "
   xte "str $WIPTER_EMAIL"
@@ -103,31 +125,19 @@ setup_wipter() {
   sleep 5
   echo " "
   echo "=== === === === === === === === === === === === ==="
-  echo "Typing PASSWORD = $MASKED_PASSWORD"
+  echo "[INFO] Typing PASSWORD = $MASKED_PASSWORD"
   echo "=== === === === === === === === === === === === ==="
   echo " "
   xte "str $WIPTER_PASSWORD"
   sleep 5
   xte "key Return"
-
   echo " "
   echo "=== === === === === === === === === === === === ==="
-  echo "Wipter setup complete."
+  echo "[INFO] Wipter setup complete."
   echo "=== === === === === === === === === === === === ==="
   echo " "
-  mkdir -p "$(dirname "$FLAG_FILE")"
-  # touch "$FLAG_FILE"
   return 0
 }
-
-echo " "
-echo "=== === === === ==="
-echo "Starting Wipter ..."
-echo "=== === === === ==="
-echo " "
-
-/opt/Wipter/wipter-app &
-setup_wipter
 
 discord_loop() {
     DISCORD_WEBHOOK_INTERVAL=${DISCORD_WEBHOOK_INTERVAL:-300}
@@ -144,8 +154,21 @@ discord_loop() {
     done
 }
 
+echo " "
+echo "# ### ### ### ### #"
+echo "# Starting Wipter #"
+echo "# ### ### ### ### #"
+echo " "
+
 if [[ -n "$DISCORD_WEBHOOK_URL" && "$DISCORD_WEBHOOK_URL" =~ ^https://discord\.com/api/webhooks/[0-9]+/[A-Za-z0-9_-]+$ ]]; then
+    echo "[INFO] Valid Discord webhook detected — starting Discord loop in background..."
     discord_loop &
 else
-    echo "Discord webhook is not configured correctly; skipping Discord loop."
+    echo "[WARN] Discord webhook is missing or invalid."
+    echo "[WARN] Expected format: https://discord.com/api/webhooks/<id>/<token>"
+    echo "[WARN] Skipping Discord loop — please set DISCORD_WEBHOOK_URL correctly."
 fi
+
+/opt/Wipter/wipter-app &
+sleep 5
+setup_wipter

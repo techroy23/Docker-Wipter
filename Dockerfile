@@ -3,7 +3,7 @@ FROM ghcr.io/techroy23/docker-slimvnc:latest
 ENV DEBIAN_FRONTEND=noninteractive
  
 RUN apt-get update -y
-RUN apt-get install -y ca-certificates net-tools gnome-keyring xautomation wmctrl libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils libatspi2.0-0 libuuid1 libsecret-1-0
+RUN apt-get install -y ca-certificates net-tools gnome-keyring xautomation wmctrl libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils libatspi2.0-0 libuuid1 libsecret-1-0 libsecret-tools
 
 RUN update-ca-certificates
 

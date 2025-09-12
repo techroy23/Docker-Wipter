@@ -1,6 +1,6 @@
 #!/bin/bash
 set -m
-
+   
 echo " "
 echo "# ### ### ### ### ### ### ### #"
 echo "# Executing custom entrypoint #"

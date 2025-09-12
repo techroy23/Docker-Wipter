@@ -1,5 +1,5 @@
 FROM ghcr.io/techroy23/docker-slimvnc:latest
-  
+   
 ENV DEBIAN_FRONTEND=noninteractive
  
 RUN apt-get update -y

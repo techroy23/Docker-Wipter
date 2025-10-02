@@ -45,6 +45,12 @@ echo " >>> >>> [RUN] dbus-uuidgen > /etc/machine-id"
 dbus-uuidgen > /etc/machine-id
 sleep 2
 
+echo " >>> >>> [CHK] Checking for stale dbus pid file"
+if [ -f /run/dbus/pid ] && ! pgrep -x dbus-daemon > /dev/null; then
+    echo " >>> >>> [INFO] Removing stale /run/dbus/pid"
+    rm -f /run/dbus/pid
+fi
+
 echo " >>> >>> [RUN] dbus-daemon --system --fork"
 dbus-daemon --system --fork
 sleep 2

@@ -42,13 +42,20 @@ jobs:
             echo "update_needed=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit version.txt back to main
+      - name: Update README.md and version.txt
         if: steps.version_check.outputs.update_needed == 'true'
         run: |
+          version="${{ steps.version_check.outputs.latest }}"
+          # Replace the first line of README.md with the new versioned header
+          sed -i "1s|.*|# Docker-Wipter v${version}|" README.md
           git config user.email "${{ secrets.GIT_USER_EMAIL }}"
           git config user.name "${{ secrets.GIT_USER_NAME }}"
-          git add version.txt
-          git commit -m "Update version.txt to ${{ steps.version_check.outputs.latest }} [skip ci]"
+          git add version.txt README.md
+
+      - name: Commit version bump
+        if: steps.version_check.outputs.update_needed == 'true'
+        run: |
+          git commit -m "Bump Wipter to ${{ steps.version_check.outputs.latest }} [skip ci]" || echo "No changes to commit"
           git remote set-url origin https://techroy23:${{ secrets.GH_PAT }}@github.com/techroy23/Docker-Wipter.git
           git push origin main
 

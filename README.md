@@ -1,4 +1,4 @@
-# Docker-Wipter
+# Docker-Wipter v1.25.885
  
 ## Overview
 This repository provides a containerized environment for running the **Wipter desktop application** inside a lightweight Debian‑based image.  

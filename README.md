@@ -4,6 +4,11 @@
 This repository provides a containerized environment for running the **Wipter desktop application** inside a lightweight Debian‑based image.  
 The setup includes both **amd64/arm64**, headless X11 stack with **Xvfb**, **Openbox**, **x11vnc**, and **noVNC**, allowing remote access through both VNC and a browser.  
 
+## Links
+| DockerHub | GitHub | Invite |
+|----------|----------|----------|
+| [![Docker Hub](https://img.shields.io/badge/ㅤ-View%20on%20Docker%20Hub-blue?logo=docker&style=for-the-badge)](https://hub.docker.com/r/techroy23/docker-wipter) | [![GitHub Repo](https://img.shields.io/badge/ㅤ-View%20on%20GitHub-black?logo=github&style=for-the-badge)](https://github.com/techroy23/Docker-Wipter) | [![Invite Link](https://img.shields.io/badge/ㅤ-Join%20Wipter%20Now-brightgreen?logo=linktree&style=for-the-badge)](https://wipter.com/register?via=66075F1E60) |
+
 The container also integrates:
 - Automated **DBus** system/session bus initialization
 - **gnome-keyring** for secure credential storage
@@ -75,5 +80,6 @@ docker run -d \
 <div align="center">
   <img width="50%" src="https://raw.githubusercontent.com/techroy23/Docker-Wipter/refs/heads/main/screenshot/img1.png" alt="Alt text">
 </div>
+
 
 

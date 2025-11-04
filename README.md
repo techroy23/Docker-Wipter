@@ -1,5 +1,5 @@
 # Docker-Wipter v1.25.885
- 
+  
 ## Overview
 This repository provides a containerized environment for running the **Wipter desktop application** inside a lightweight Debian‑based image.  
 The setup includes both **amd64/arm64**, headless X11 stack with **Xvfb**, **Openbox**, **x11vnc**, and **noVNC**, allowing remote access through both VNC and a browser.  

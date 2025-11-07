@@ -10,8 +10,23 @@ export DISPLAY=:0
 export VNC_DISPLAY=":0"
 DISPLAY=:0
 VNC_DISPLAY=":0"
-VNC_PORT=${VNC_PORT:-5901}
-NOVNC_PORT=${NOVNC_PORT:-6080}
+
+# Allow override of ports via env vars, with fallback check
+pick_port() {
+    local port="$1"
+    local attempts=0
+    while [ $attempts -lt 2 ]; do
+        if ! lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+            echo "$port"
+            return
+        fi
+        port=$((port + 1))
+        attempts=$((attempts + 1))
+    done
+    echo "$port"
+}
+VNC_PORT=$(pick_port "${VNC_PORT:-5910}")
+NOVNC_PORT=$(pick_port "${NOVNC_PORT:-6080}")
 
 if [ -z "${WIPTER_EMAIL:-}" ]; then
     echo " >>> >>> [ERR] WIPTER_EMAIL is not set."

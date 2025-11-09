@@ -16,17 +16,49 @@ pick_port() {
     local port="$1"
     local attempts=0
     while [ $attempts -lt 2 ]; do
-        if ! lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+        if command -v lsof >/dev/null 2>&1; then
+            # Try lsof
+            if ! lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+                echo "$port"
+                return
+            fi
+        elif command -v ss >/dev/null 2>&1; then
+            # Fallback to ss
+            if ! ss -ltn | awk '{print $4}' | grep -q ":$port$"; then
+                echo "$port"
+                return
+            fi
+        elif command -v netstat >/dev/null 2>&1; then
+            # Final fallback to netstat
+            if ! netstat -ltn | awk '{print $4}' | grep -q ":$port$"; then
+                echo "$port"
+                return
+            fi
+        else
+            # No tool available, assume port is free
             echo "$port"
             return
         fi
+
         port=$((port + 1))
         attempts=$((attempts + 1))
     done
     echo "$port"
 }
+
+SLEEP_TIME=$(( RANDOM % 16 + 15 ))
+log "Sleeping for $SLEEP_TIME seconds before selecting ports..."
+sleep "$SLEEP_TIME"
+
 VNC_PORT=$(pick_port "${VNC_PORT:-5910}")
 NOVNC_PORT=$(pick_port "${NOVNC_PORT:-6080}")
+
+echo " "
+echo " "
+log "Selected VNC port: $VNC_PORT"
+log "Selected noVNC port: $NOVNC_PORT"
+echo " "
+echo " "
 
 if [ -z "${WIPTER_EMAIL:-}" ]; then
     echo " >>> >>> [ERR] WIPTER_EMAIL is not set."
@@ -107,7 +139,7 @@ done
 sleep 2
 
 echo " >>> >>> [RUN] openbox"
-openbox &
+openbox 2>/dev/null &
 sleep 2
 
 echo " >>> >>> [RUN] gnome-keyring-daemon --start --components=secrets"
@@ -119,11 +151,11 @@ echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace
 sleep 2
 
 echo " >>> >>> [RUN] x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet"
-x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet &
+x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet 2>/dev/null &
 sleep 2
 
 echo " >>> >>> [RUN] /opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT"
-/opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT &
+/opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT 2>/dev/null &
 sleep 2
 
 MASKED_PASSWORD=$(printf '*%.0s' $(seq ${#WIPTER_PASSWORD}))

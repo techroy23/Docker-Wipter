@@ -2,7 +2,7 @@
   
 ## Overview
 This repository provides a containerized environment for running the **Wipter desktop application** inside a lightweight Debian‑based image.  
-The setup includes both **amd64/arm64**, headless X11 stack with **Xvfb**, **Openbox**, **x11vnc**, and **noVNC**, allowing remote access through both VNC and a browser.  
+The setup includes both **amd64/arm64**, headless X11 stack with **Xvfb**, **Openbox**, **x11vnc**, and **noVNC**.  
 
 ## Links
 | DockerHub | GitHub | Invite |
@@ -24,8 +24,7 @@ The container also integrates:
   - `Xvfb` virtual framebuffer for X11 rendering  
   - `openbox` as a minimal window manager  
   - `x11vnc` for VNC access  
-  - `noVNC` + `websockify` for browser‑based access
-
+  
 - **Custom System Identity Simulation**  
   - `custom.sh` dynamically generates randomized host metadata (hostname, machine ID, vendor/model, firmware version/date)  
   - Overrides `lsb_release` and `hostnamectl` outputs for consistency
@@ -58,15 +57,8 @@ docker run -d \
   -e WIPTER_PASSWORD="your_secure_password" \
   -e DISCORD_WEBHOOK_INTERVAL=300 \
   -e DISCORD_WEBHOOK_URL="your_dicord_webhook_url" \
-  -e VNC_PORT=5900 \
-  -e NOVNC_PORT=6080 \
-  -p 5900:5900 -p 6080:6080 \
   techroy23/docker-wipter:latest
 ```
-
-## Access
-- VNC Client: localhost:5900
-- Web Interface (noVNC): http://localhost:6080
 
 ## Promo
 <ul><li><a href="https://wipter.com/register?via=66075F1E60"> [ REGISTER HERE ] </a></li></ul>
@@ -80,6 +72,7 @@ docker run -d \
 <div align="center">
   <img width="50%" src="https://raw.githubusercontent.com/techroy23/Docker-Wipter/refs/heads/main/screenshot/img1.png" alt="Alt text">
 </div>
+
 
 
 

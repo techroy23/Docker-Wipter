@@ -11,6 +11,10 @@ export VNC_DISPLAY=":0"
 DISPLAY=:0
 VNC_DISPLAY=":0"
 
+log() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') $*"
+}
+
 # Allow override of ports via env vars, with fallback check
 pick_port() {
     local port="$1"

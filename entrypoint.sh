@@ -15,6 +15,8 @@ export VNC_DISPLAY=":0"
 DISPLAY=:0
 VNC_DISPLAY=":0"
 
+ENABLE_VNC="${ENABLE_VNC:-false}"
+echo " >>> >>> [CHK] ENABLE_VNC = ${ENABLE_VNC}"
 
 # Allow override of ports via env vars, with fallback check
 pick_port() {
@@ -155,13 +157,18 @@ echo " >>> >>> [RUN] $WIPTER_PASSWORD | gnome-keyring-daemon --unlock --replace"
 echo "$WIPTER_PASSWORD" | gnome-keyring-daemon --unlock --replace
 sleep 2
 
-echo " >>> >>> [RUN] x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet"
-x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet 2>/dev/null &
-sleep 2
+if [ "${ENABLE_VNC,,}" = "true" ]; then
+    echo " >>> >>> [RUN] x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet"
+    x11vnc -display $DISPLAY -rfbport $VNC_PORT -forever -shared -nopw -quiet 2>/dev/null &
+    sleep 2
 
-echo " >>> >>> [RUN] /opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT"
-/opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT 2>/dev/null &
-sleep 2
+    echo " >>> >>> [RUN] /opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT"
+    /opt/noVNC/utils/novnc_proxy --vnc 0.0.0.0:$VNC_PORT --listen 0.0.0.0:$NOVNC_PORT 2>/dev/null &
+    sleep 2
+else
+    echo " >>> >>> [INFO] VNC disabled — skipping remote access setup"
+    echo " >>> >>> [INFO] GUI apps will still run on Xvfb display $DISPLAY"
+fi
 
 MASKED_PASSWORD=$(printf '*%.0s' $(seq ${#WIPTER_PASSWORD}))
 
@@ -235,9 +242,10 @@ if [[ -n "$DISCORD_WEBHOOK_URL" && "$DISCORD_WEBHOOK_URL" =~ ^https://discord\.c
     echo " >>> >>> [INFO] Valid Discord webhook detected — starting Discord loop in background"
     discord_loop &
 else
-    echo " >>> >>> [WARN] Discord webhook is missing or invalid"
-    echo " >>> >>> [WARN] Expected format: https://discord.com/api/webhooks/<id>/<token>"
-    echo " >>> >>> [WARN] Skipping Discord loop — please set DISCORD_WEBHOOK_URL correctly"
+    echo " >>> >>> [WARN] Skipping Discord loop"
+    echo " >>> >>> [WARN] Discord webhook is missing or invalid or not set"
+    echo " >>> >>> [WARN] Expected format: https://discord.com/api/webhooks/XXX/YYY"
+    echo " >>> >>> [WARN] Please set DISCORD_WEBHOOK_URL correctly if you want to get a screenshot of the GUI"
 fi
 
 /opt/Wipter/wipter-app &

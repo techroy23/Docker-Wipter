@@ -53,10 +53,11 @@ docker run -d \
   --pull always \
   --shm-size=2gb \
   --privileged \
-  -e WIPTER_EMAIL="YourEmail@here.com" \
-  -e WIPTER_PASSWORD="your_secure_password" \
+  -e ENABLE_VNC='false' \
+  -e WIPTER_EMAIL='example@gmail.com' \
+  -e WIPTER_PASSWORD='mYv3rYsEcUr3dP@sSw0rD' \
   -e DISCORD_WEBHOOK_INTERVAL=300 \
-  -e DISCORD_WEBHOOK_URL="your_dicord_webhook_url" \
+  -e DISCORD_WEBHOOK_URL='your_dicord_webhook_url' \
   techroy23/docker-wipter:latest
 ```
 
@@ -72,6 +73,7 @@ docker run -d \
 <div align="center">
   <img width="50%" src="https://raw.githubusercontent.com/techroy23/Docker-Wipter/refs/heads/main/screenshot/img1.png" alt="Alt text">
 </div>
+
 
 
 

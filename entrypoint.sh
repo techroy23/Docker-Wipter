@@ -78,18 +78,18 @@ if [ -z "${WIPTER_PASSWORD:-}" ]; then
 fi
 
 echo " >>> >>> Modifying lsb_release / hostnamectl"
-sh /app/custom.sh 
-/usr/bin/lsb_release
-/usr/bin/hostnamectl
+sh /app/custom.sh > /dev/null 2>&1
+/usr/bin/lsb_release > /dev/null 2>&1
+/usr/bin/hostnamectl > /dev/null 2>&1
 
-RAND_NUM=$(awk 'BEGIN { srand(); printf "%04d\n", int(1000 + rand()*9000) }')
-HOSTNAME="PC-$RAND_NUM"
-if hostname "$HOSTNAME" && echo "$HOSTNAME" > /etc/hostname; then
-    echo " >>> >>> [INFO] Hostname successfully set to: $HOSTNAME"
-else
-    echo " >>> >>> [ERR] Failed to set hostname to: $HOSTNAME"
-    echo " >>> >>> [ERR] Please check permissions or container capabilities."
-fi
+# RAND_NUM=$(awk 'BEGIN { srand(); printf "%04d\n", int(1000 + rand()*9000) }')
+# HOSTNAME="PC-$RAND_NUM"
+# if hostname "$HOSTNAME" && echo "$HOSTNAME" > /etc/hostname; then
+#     echo " >>> >>> [INFO] Hostname successfully set to: $HOSTNAME"
+# else
+#     echo " >>> >>> [ERR] Failed to set hostname to: $HOSTNAME"
+#     echo " >>> >>> [ERR] Please check permissions or container capabilities."
+# fi
 
 echo " >>> >>> [RUN] update-ca-certificates"
 update-ca-certificates

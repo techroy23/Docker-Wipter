@@ -48,11 +48,11 @@ The container also integrates:
 ## Run
 ```
 docker run -d \
-  --name=docker-wipter \
-  --restart=always \
-  --pull always \
+  --name=wipter \
+  --cpus=0.25 --pull=always --restart=always \
+  --log-driver=json-file --log-opt max-size=1m --log-opt max-file=1 \
+  --cap-add=NET_ADMIN --cap-add=NET_RAW --sysctl net.ipv4.ip_forward=1 \
   --shm-size=2gb \
-  --privileged \
   -e ENABLE_VNC='false' \
   -e WIPTER_EMAIL='example@gmail.com' \
   -e WIPTER_PASSWORD='mYv3rYsEcUr3dP@sSw0rD' \
@@ -73,6 +73,7 @@ docker run -d \
 <div align="center">
   <img width="50%" src="https://raw.githubusercontent.com/techroy23/Docker-Wipter/refs/heads/main/screenshot/img1.png" alt="Alt text">
 </div>
+
 
 
 

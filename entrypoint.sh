@@ -181,6 +181,7 @@ setup_wipter() {
         return 0
     else
         echo " >>> >>> [INFO] No valid Wipter keyring secret detected — starting login process"
+        sleep 10
     fi
 
     local WIPTER_WIN=""
@@ -191,7 +192,7 @@ setup_wipter() {
             WIPTER_WIN=$(echo "$WIPTER_INFO" | head -n 1 | awk '{print $1}')
             break
         fi
-        sleep 5
+        sleep 10
         attempts=$((attempts+1))
     done
 
@@ -201,21 +202,21 @@ setup_wipter() {
     fi
 
     wmctrl -ia "$WIPTER_WIN"
-    sleep 3
+    sleep 30
     xte "key Tab"
-    sleep 3
+    sleep 5
     xte "key Tab"
-    sleep 3
+    sleep 5
     xte "key Tab"
-    sleep 3
+    sleep 5
     echo " >>> >>> [INFO] Typing EMAIL = $WIPTER_EMAIL"
     xte "str $WIPTER_EMAIL"
-    sleep 3
+    sleep 5
     xte "key Tab"
-    sleep 3
+    sleep 5
     echo " >>> >>> [INFO] Typing PASSWORD = $MASKED_PASSWORD"
     xte "str $WIPTER_PASSWORD"
-    sleep 3
+    sleep 5
     xte "key Return"
     echo " >>> >>> [INFO] Wipter setup complete."
     return 0

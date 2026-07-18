@@ -13,6 +13,7 @@ RUN apt-get update \
 		dbus dbus-x11 openbox menu xterm xvfb x11vnc python3-numpy \
         xfonts-base xfonts-75dpi xfonts-100dpi xfonts-scalable \
 		libappindicator3-1 libasound2 libatspi2.0-0 libgtk-3-0 libnotify4 libnss3 libsecret-1-0 libuuid1 libxss1 libxtst6 xdg-utils \
+		iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth=1 https://github.com/novnc/noVNC /opt/noVNC \
